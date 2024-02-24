@@ -1,8 +1,18 @@
-import express from "express";
-import { getProductsBasedOnCategory } from "../controllers/product.controller.js";
+import { Router } from "express";
+import {
+	getPopularProducts,
+	getProductDetails,
+	getProductsBasedOnCategory,
+	handleSearchSuggestions,
+} from "../controllers/product.controller.js";
 
-const ProductRouter = express.Router();
+const ProductRouter = Router();
 
-ProductRouter.get("/products", getProductsBasedOnCategory);
+ProductRouter.get("/products-by-category", getProductsBasedOnCategory);
+ProductRouter.get("/popular-products", getPopularProducts);
+ProductRouter.get("/product/:id", getProductDetails);
+
+//for searching a product based on keywords
+ProductRouter.get("/search", handleSearchSuggestions);
 
 export { ProductRouter };

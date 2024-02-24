@@ -14,11 +14,11 @@ const AddressSchema = new Schema(
 const UserSchema = new Schema({
 	userName: { type: String, required: true },
 	emailId: { type: String, required: true },
-	password: { type: String, required: true },
+	password: { type: String, required: true, select: false },
 	phoneNumber: String,
 	address: AddressSchema,
 	favorites: [{ type: Schema.Types.ObjectId, ref: "Products" }],
 	productsInCart: [{ type: Schema.Types.ObjectId, ref: "Products" }],
 });
 
-export const Reviews = mongoose.model("Users", UserSchema);
+export const Users = mongoose.model("Users", UserSchema);

@@ -2,7 +2,7 @@ import { Products } from "../models/product.model.js";
 
 const getProductsBasedOnCategory = async (req, res) => {
 	try {
-		//geting all the products based on category and sub-category
+		//getting all the products based on category and sub-category
 		const { category, subCategory } = req.query;
 		const products = await Products.find({
 			productCategory: category,
@@ -19,38 +19,33 @@ const getProductsBasedOnCategory = async (req, res) => {
 		res.json({ success: false, message: error.message });
 	}
 };
+
 const getPopularProducts = async (req, res) => {
 	try {
-		//geting all the products based on category and sub-category
-		const { category, subCategory } = req.query;
-		const products = await Products.find({
-			productCategory: category,
-			productSubcategory: subCategory,
-		});
+		//getting all the products with rating more than 4.8
+		const products = await Products.find({ rating: { $gte: 4.8 } });
 
 		res.json({
 			success: true,
 			message: "Products found successfully",
-			products: products,
+			products,
 		});
 	} catch (error) {
 		console.log(error);
 		res.json({ success: false, message: error.message });
 	}
 };
-const getHighRatedProducts = async (req, res) => {
+
+const getProductDetails = async (req, res) => {
 	try {
-		//geting all the products based on category and sub-category
-		const { category, subCategory } = req.query;
-		const products = await Products.find({
-			productCategory: category,
-			productSubcategory: subCategory,
-		});
+		//getting all the products based on category and sub-category
+		const { id } = req.params;
+		const product = await Products.findOne({ productId: id });
 
 		res.json({
 			success: true,
 			message: "Products found successfully",
-			products: products,
+			product,
 		});
 	} catch (error) {
 		console.log(error);
@@ -58,4 +53,32 @@ const getHighRatedProducts = async (req, res) => {
 	}
 };
 
-export { getProductsBasedOnCategory, getPopularProducts, getHighRatedProducts };
+const handleSearchSuggestions = async (req, res) => {
+	try {
+		const { query } = req.query;		
+		// getting all the products which contains the following keyword
+		const products = await Products.find({
+			$or: [
+				{ productName: { $regex: new RegExp(query, "i") } },
+				{ productCategory: { $regex: new RegExp(query, "i") } },
+				{ productSubcategory: { $regex: new RegExp(query, "i") } },
+			],
+		}).limit(10);
+
+		res.json({
+			success: true,
+			message: "Products found successfully",
+			products,
+		});
+	} catch (error) {
+		console.log(error);
+		res.json({ success: false, message: error.message });
+	}
+};
+
+export {
+	getProductsBasedOnCategory,
+	getPopularProducts,
+	getProductDetails,
+	handleSearchSuggestions,
+};
