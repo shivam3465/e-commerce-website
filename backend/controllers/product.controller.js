@@ -4,10 +4,14 @@ const getProductsBasedOnCategory = async (req, res) => {
 	try {
 		//getting all the products based on category and sub-category
 		const { category, subCategory } = req.query;
-		const products = await Products.find({
-			productCategory: category,
-			productSubcategory: subCategory,
-		});
+
+		const query = {};
+
+		//conditionally adding the category and sub-category if they exists
+		if (category) query.productCategory = category;
+		if (subCategory) query.productSubcategory = subCategory;
+
+		const products = await Products.find(query);
 
 		res.json({
 			success: true,
@@ -55,7 +59,7 @@ const getProductDetails = async (req, res) => {
 
 const handleSearchSuggestions = async (req, res) => {
 	try {
-		const { query } = req.query;		
+		const { query } = req.query;
 		// getting all the products which contains the following keyword
 		const products = await Products.find({
 			$or: [
