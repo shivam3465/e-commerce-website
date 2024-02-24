@@ -2,11 +2,11 @@ import mongoose, { Schema } from "mongoose";
 
 const AddressSchema = new Schema(
 	{
-		mainAddress: { type: String, required: true },
-		city: { type: String, required: true },
-		state: { type: String, required: true },
-		country: { type: String, required: true },
-		pinCode: { type: Number, required: true },
+		mainAddress: { type: String },
+		city: { type: String },
+		state: { type: String },
+		country: { type: String },
+		pinCode: { type: Number },
 	},
 	{ _id: false }
 );

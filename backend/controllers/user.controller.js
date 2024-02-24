@@ -1,20 +1,22 @@
 import { Users } from "../models/user.model.js";
+import bcrypt from "bcrypt";
+import { setCookies } from "../utils/setCookies.js";
 
 export const register = async (req, res) => {
 	try {
-		const { name, email, password } = req.body;
-		let user = await Users.findOne({ email });
+		const { userName, emailId, password } = req.body;
+		let user = await Users.findOne({ emailId });
 
 		if (user)
 			res.status(400).json({
 				success: false,
-				message: "Previously registered user",
+				message: "Already registered user",
 			});
 		else {
 			const hashedPassword = await bcrypt.hash(password, 10);
 			user = await Users.create({
-				name,
-				email,
+				userName,
+				emailId,
 				password: hashedPassword,
 			});
 
@@ -27,16 +29,17 @@ export const register = async (req, res) => {
 			);
 		}
 	} catch (error) {
-		res.status(400).json({ error: error.message, success: false });
+		console.log(error);
+		res.status(400).json({ success: false, message: error.message });
 	}
 };
 
 export const login = async (req, res) => {
 	try {
-		const { email, password } = req.body;
+		const { emailId, password } = req.body;
 
 		// here due to select keyword in password we have to manually extract the password using +password and by default it will be not be there.
-		let user = await Users.findOne({ email }).select("+password");
+		let user = await Users.findOne({ emailId }).select("+password");
 
 		if (user) {
 			const matched = await bcrypt.compare(password, user.password);
@@ -44,20 +47,21 @@ export const login = async (req, res) => {
 				setCookies(
 					res,
 					user.id,
-					`Welcom back ${user.name}`,
+					`Welcome back ${user.userName}`,
 					200,
 					1000 * 60 * 60
 				);
 			} else {
 				res.status(401).json({
 					success: false,
-					message: "Wrong Password",
+					message: "Wrong Email or Password",
 				});
 			}
 		} else {
 			res.status(401).json({ success: false, message: "User Not Found" });
 		}
 	} catch (error) {
+        console.log(error);
 		res.status(400).json({ success: false, message: error.message });
 	}
 };

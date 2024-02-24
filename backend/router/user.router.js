@@ -5,6 +5,6 @@ const UserRouter = Router();
 
 UserRouter.post("/login", login);
 UserRouter.post("/register", register);
-UserRouter.get("/login", logout);
+UserRouter.get("/logout", logout);
 
 export { UserRouter };
